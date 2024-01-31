@@ -31,7 +31,7 @@ $form.Controls.Add($textBox)
 $button = New-Object System.Windows.Forms.Button
 $button.Location = New-Object System.Drawing.Point(10, 50)
 $button.Size = New-Object System.Drawing.Size(100, 30)
-$button.Text = "Generate"
+$button.Text = "Process"
 $button.Add_Click({
     # Get the text from the text box
     $command = $textBox.Text
@@ -42,22 +42,41 @@ $button.Add_Click({
     if ($parts.Length -eq 2) {
         # Rebuild the command with the modified text
         $newCommand = $parts[1].Trim()
+        $finalCommand = "SSH :$newCommand"
         
         # Set the text box text to the modified command
-        $textBox.Text = $newCommand
+        $textBox.Text = $finalCommand
         
-        # Change the button text to "Copy" and enable copying
-        $button.Text = "Copy"
+        # Change the button text to "Execute" and enable copying
+        $button.Text = "Execute"
         $button.Add_Click({
             CopyToClipboard
+            $computer = "127.0.0.1:2024"
+            
+            # Execute command
+            Start-Process powershell.exe -ArgumentList "-NoExit -Command $finalCommand"
+            Start-Sleep -Seconds 2
+            Start-Process -FilePath "mstsc.exe" -ArgumentList "/v:$computer"
         })
     }
 })
 $form.Controls.Add($button)
 
+# Create a button for resetting the form
+$resetButton = New-Object System.Windows.Forms.Button
+$resetButton.Location = New-Object System.Drawing.Point(120, 50)
+$resetButton.Size = New-Object System.Drawing.Size(100, 30)
+$resetButton.Text = "Reset Form"
+$resetButton.Add_Click({
+    # Clear the text box and reset button text and behavior
+    $textBox.Text = ""
+    $button.Text = "Process"
+    $button.Remove_Click($null)
+})
+$form.Controls.Add($resetButton)
+
 function CopyToClipboard {
     [System.Windows.Forms.Clipboard]::SetText($textBox.Text)
-    $form.Close()
 }
 
 # Show the form
