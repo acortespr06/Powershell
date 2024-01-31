@@ -1,3 +1,17 @@
+<#
+.SYNOPSIS
+This script creates a Windows Forms application for processing and copying commands.
+
+.DESCRIPTION
+Edit and copy SSH command
+
+.AUTHOR
+Andres Cortes
+
+.VERSION
+1.0
+#>
+
 # Load the Windows Forms assembly
 Add-Type -AssemblyName System.Windows.Forms
 
